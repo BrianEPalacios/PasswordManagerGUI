@@ -61,6 +61,22 @@ def save_data():
 
 
 # -------------------------------------------- Search  Function ------------------------------------------------------#
+def search_data():
+    website = website_entry.get()
+    email = email_username_entry.get()
+    try:
+        with open("data.json", "r") as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        messagebox.showinfo(title="Error", message="No Data File Found")
+    else:
+        if website in data:
+            username = data[website]["email"]
+            password = data[website]["password"]
+            messagebox.showinfo(title=website.title(), message=f"Email/Username: {username}\n "
+                                                               f"Password: {password}")
+        else:
+            messagebox.showinfo(title="Error", message=f"There is no information for {website} exists.")
 # ---------------------------- UI SETUP ------------------------------- #
 # Creating window
 window = tk.Tk()
@@ -88,8 +104,8 @@ password_label = tk.Label(text="Password:")
 password_label.grid(row=3, column=0)
 
 # Creating entry boxes
-website_entry = tk.Entry(width=52)
-website_entry.grid(row=1, column=1, columnspan=2)
+website_entry = tk.Entry(width=33)
+website_entry.grid(row=1, column=1)
 # cursor automatically starts in here
 website_entry.focus()
 
@@ -103,6 +119,9 @@ password_entry.grid(row=3, column=1)
 # Creating buttons
 generate_password_button = tk.Button(text="Generate Password", command=generate_password)
 generate_password_button.grid(row=3, column=2)
+
+search_button = tk.Button(text="Search", width=15, command=search_data)
+search_button.grid(row=1, column=2)
 
 add_button = tk.Button(text="Add", width=44, command=save_data)
 add_button.grid(row=4, column=1, columnspan=2)
