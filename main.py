@@ -1,8 +1,13 @@
 import tkinter as tk
 from tkinter import messagebox
-from password_generator import PasswordGenerator
+
 import pyperclip
 
+from password_generator import PasswordGenerator
+
+import json
+
+DEFAULT_USERNAME_ENTRY = "b.estpalacios@gmail.com"
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def generate_password():
@@ -13,6 +18,22 @@ def generate_password():
 
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
+def append_to_file(password_data):
+    with open("data.json", "r") as data_file:
+        # read old data
+        data = json.load(data_file)
+        # Update old data with new data
+        data.update(password_data)
+
+    with open("data.json", "w") as outfile:
+        json.dump(data, outfile, indent=4)
+
+
+def create_new_file(password_data):
+    with open("data.json", "w") as outfile:
+        json.dump(password_data, outfile, indent=4)
+
+
 def save_data():
     website = website_entry.get()
     email = email_username_entry.get()
@@ -24,12 +45,22 @@ def save_data():
         is_ok = messagebox.askokcancel(title=website, message=f"these are the details entered: \nEmail: {email}"
                                                       f"\n Password: {password}\nIs it ok to save?")
         if is_ok:
-            with open(file="data.txt", mode="a") as data:
-                data.write(f"{website} | {email} | {password}\n")
+            password_data = {
+                website: {
+                    "email": email,
+                    "password": password
+                }
+            }
+            try:
+                append_to_file(password_data)
+            except:
+                create_new_file(password_data)
+            finally:
                 website_entry.delete(0, "end")
                 password_entry.delete(0, "end")
 
 
+# -------------------------------------------- Search  Function ------------------------------------------------------#
 # ---------------------------- UI SETUP ------------------------------- #
 # Creating window
 window = tk.Tk()
@@ -64,7 +95,7 @@ website_entry.focus()
 
 email_username_entry = tk.Entry(width=52)
 email_username_entry.grid(row=2, column=1, columnspan=2)
-email_username_entry.insert(0, "b.estpalacios@gmail.com")
+email_username_entry.insert(0, DEFAULT_USERNAME_ENTRY)
 
 password_entry = tk.Entry(width=33)
 password_entry.grid(row=3, column=1)

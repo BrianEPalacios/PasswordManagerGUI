@@ -8,6 +8,7 @@ __pycache__/
 
 # data file
 data.txt
+data.json
 
 # C extensions
 *.so
